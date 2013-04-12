@@ -1,0 +1,49 @@
+export CLICOLOR=1
+export LSCOLORS=ExFxCxDxBxegedabagacad
+
+# colorful man page
+export PAGER="`which less` -s"
+export BROWSER="$PAGER"
+export LESS_TERMCAP_mb=$'\E[38;5;167m'
+export LESS_TERMCAP_md=$'\E[38;5;39m'
+export LESS_TERMCAP_me=$'\E[38;5;231m'
+export LESS_TERMCAP_se=$'\E[38;5;231m'
+export LESS_TERMCAP_so=$'\E[38;5;167m'
+export LESS_TERMCAP_ue=$'\E[38;5;231m'
+export LESS_TERMCAP_us=$'\E[38;5;167m'
+
+# don't put duplicate lines in the history. See bash(1) for more options
+# ... or force ignoredups and ignorespace
+HISTCONTROL=ignoredups:ignorespace
+
+# some more ls aliases
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+
+# fix ruby 1.9.x string utf-8 bug
+export RUBYOPT=-Ku
+
+# Load RVM into a shell session *as a function*
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+
+# Show git branch name
+function git_branch {
+  ref=$(git symbolic-ref HEAD 2> /dev/null) || return;
+  echo "("${ref#refs/heads/}") ";
+}
+
+function git_since_last_commit {
+  now=`date +%s`;
+  last_commit=$(git log --pretty=format:%at -1 2> /dev/null) || return;
+  seconds_since_last_commit=$((now-last_commit));
+  minutes_since_last_commit=$((seconds_since_last_commit/60));
+  hours_since_last_commit=$((minutes_since_last_commit/60));
+  minutes_since_last_commit=$((minutes_since_last_commit%60));
+
+  echo "${hours_since_last_commit}h${minutes_since_last_commit}m ";
+}
+
+PS1="[\[\033[1;32m\]\w\[\033[0m] \[\033[0m\]\[\033[1;36m\]\$(git_branch)\[\033[0;33m\]\$(git_since_last_commit)\[\033[0m\]$ "
+
+alias subl='open -a "Sublime Text 2"'
