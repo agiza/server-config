@@ -25,14 +25,11 @@ Restart
 
     /etc/init.d/networking restart
 
-From the Linode, ping each of the default gateways listed on the "Remote Access" tab of the Linode Manager:
-
-    ping 12.34.56.1
-    ping 98.76.54.1
-
 ## Set alias for private network
 
 Set private ip to some alias.
+
+    nano /etc/hosts
 
     192.168.176.242 app.bhuntr.com app
     192.168.158.132 mysql.bhuntr.com mysql
@@ -60,7 +57,7 @@ Grant permission (app is the private ip for php serve),
 
     GRANT ALL ON *.* TO 'USERNAME'@'app' IDENTIFIED BY 'PASSWORD';
 
-## Testing connection
+## On PHP server, test the connection
 
 Create a php file on php server,
 
