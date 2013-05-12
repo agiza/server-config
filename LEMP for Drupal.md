@@ -198,6 +198,56 @@ Check response header to see if
     X-Drupal-Cache:HIT
     X-Varnish-Cache:HIT
 
+## Memcache
+
+Install
+
+    apt-get install memcached libmemcached-tools
+    apt-get install php5-dev php-pear make
+    pecl install memcache
+
+Edit
+
+    nano /etc/php5/conf.d/memcache.ini
+
+Paste
+
+    extension=memcache.so
+    memcache.hash_strategy="consistent"
+
+
+Edit memcached.conf
+    nano /etc/memcached.conf
+
+Set the memory
+
+    # Change this default value to ~ 1/4 of your total available RAM
+    -m 16
+
+Restart
+
+    /etc/init.d/memcached restart
+    service nginx restart
+
+Check if Memcached is running:
+
+    sudo netstat -tap | grep memcached
+
+You should see something like:
+
+    tcp 0 0 localhost:11211 *:* LISTEN 25266/memcached
+
+Install memcache
+
+    drush dl memcache; drush en memcache -y
+
+Add this to Drupal's settings.php, change unique_key to something unique.
+
+    $conf['cache_backends'][] = 'sites/all/modules/memcache/memcache.inc';
+    $conf['cache_default_class'] = 'MemCacheDrupal';
+    $conf['cache_class_cache_form'] = 'DrupalDatabaseCache';
+    $conf['memcache_key_prefix'] = 'unique_key';
+
 ## References
 
 Configure Varnish 3 for Drupal 7
@@ -208,3 +258,9 @@ http://www.rklawson.com/blog/2012/04/14/caching-drupal-7-varnish-apc-and-memcach
 
 Linux – How to configure NGINX + PHP-FPM + Drupal 7.0
 http://blog.celogeek.com/201209/202/how-to-configure-nginx-php-fpm-drupal-7-0/
+
+Installing Memcached for Drupal 7
+http://andrewdunkle.com/how-install-memcached-drupal-7
+
+Memcache Installation
+http://drupal.org/node/1131468
