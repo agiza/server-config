@@ -226,7 +226,7 @@ Set the memory
 
 Restart
 
-    /etc/init.d/memcached restart
+    service memcached restart
     service nginx restart
 
 Check if Memcached is running:
@@ -247,6 +247,64 @@ Add this to Drupal's settings.php, change unique_key to something unique.
     $conf['cache_default_class'] = 'MemCacheDrupal';
     $conf['cache_class_cache_form'] = 'DrupalDatabaseCache';
     $conf['memcache_key_prefix'] = 'unique_key';
+
+Check the status and stats with memstat tool
+
+Part of the memcached package is a handy tool called memstat.
+You need to specify the host IP and port. In this case the host IP is 127.0.0.1 and the port 1211.
+Open the Terminal Window and enter :
+
+    memstat 127.0.0.1:11211
+
+
+## APC
+
+AB test first and save the result.
+
+    ab -n 10 -c 5 http://example.com/
+
+Install APC.
+
+    apt-get install php-apc
+    pecl install apc
+
+Edit php.ini, add this
+
+    extension=apc.so
+    apc.enabled = 1
+    apc.shm_size = 48
+
+Restart
+
+    service nginx restart
+    service php5-fpm restart
+
+Check APC stat
+
+    mv /usr/share/doc/php-apc/apc.php.gz /var/www/example.com/
+    gunzup /var/www/example.com/apc.php.gz
+
+edit apc.ini file.
+
+    nano /etc/php5/conf.d/apc.ini
+
+adding apc.enable_cli=1 to apc.ini file.
+
+    apc.enable_cli=1
+
+Now you can go to http://example.com/apc.php to check the stat.
+
+    drush dl apc; drush en apc -y
+
+Add conf to settings.php
+http://drupalcode.org/project/apc.git/blob_plain/refs/heads/7.x-1.x:/README.txt
+
+    $conf['cache_backends'] = array('sites/all/modules/apc/drupal_apc_cache.inc');
+    $conf['cache_class_cache'] = 'DrupalAPCCache';
+    $conf['cache_class_cache_bootstrap'] = 'DrupalAPCCache';
+    //$conf['apc_show_debug'] = TRUE;  // Remove the slashes to use debug mode.
+
+And you can do AB Test again.
 
 ## References
 
